@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서울사랑상품권 가맹점 지도 조회 | 서울페이 사용처 검색</title>
+<meta name="description" content="서울사랑상품권(서울페이) 가맹점을 지도에서 쉽게 찾아보세요. 자치구·업종별 검색으로 내 주변 사용처를 한눈에 확인할 수 있습니다.">
+<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=78f5d9831b3863bca8398ad238c707e2&libraries=services,clusterer"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #f5f6fa; color: #222; }
+header { background: #1a6dff; color: #fff; padding: 16px 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+header h1 { font-size: 18px; font-weight: 700; }
+header span { font-size: 13px; opacity: 0.85; }
+.search-panel { background: #fff; padding: 16px 20px; border-bottom: 1px solid #e0e0e0; display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 12px; color: #666; font-weight: 600; }
+select, input[type=text] { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; min-width: 140px; background: #fff; }
+select:focus, input:focus { outline: none; border-color: #1a6dff; }
+.btn-search { background: #1a6dff; color: #fff; border: none; padding: 9px 24px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; height: 38px; }
+.btn-search:hover { background: #0055dd; }
+.result-info { padding: 10px 20px; font-size: 13px; color: #555; background: #f0f4ff; border-bottom: 1px solid #dde3f5; }
+.result-info strong { color: #1a6dff; }
+.main-layout { display: flex; height: calc(100vh - 175px); }
+#map { flex: 1; }
+.list-panel { width: 320px; overflow-y: auto; background: #fff; border-left: 1px solid #e0e0e0; }
+.list-header { padding: 12px 16px; background: #f8f9fb; border-bottom: 1px solid #eee; font-size: 13px; font-weight: 700; color: #444; position: sticky; top: 0; z-index: 1; }
+.store-item { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.15s; }
+.store-item:hover { background: #f0f4ff; }
+.store-item.active { background: #e8effe; border-left: 3px solid #1a6dff; }
+.store-name { font-size: 14px; font-weight: 700; color: #222; margin-bottom: 3px; }
+.store-cat { display: inline-block; font-size: 11px; background: #e8f0ff; color: #1a6dff; padding: 2px 7px; border-radius: 10px; margin-bottom: 4px; }
+.store-addr { font-size: 12px; color: #777; line-height: 1.5; }
+.empty-state { padding: 60px 20px; text-align: center; color: #aaa; }
+.empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; line-height: 1.8; }
+.loading { padding: 40px 20px; text-align: center; color: #888; font-size: 14px; }
+footer { background: #fff; border-top: 1px solid #e0e0e0; padding: 8px 20px; font-size: 11px; color: #999; text-align: center; }
+footer a { color: #1a6dff; text-decoration: none; }
+@media (max-width: 640px) {
+  .main-layout { flex-direction: column; height: auto; }
+  #map { height: 55vw; min-height: 280px; }
+  .list-panel { width: 100%; height: 360px; border-left: none; border-top: 1px solid #e0e0e0; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🗺️ 서울사랑상품권 가맹점 지도</h1>
+    <span>서울페이 사용처를 지도에서 바로 확인하세요</span>
+  </div>
+</header>
+<div class="search-panel">
+  <div class="field">
+    <label>자치구</label>
+    <select id="selGu"><option value="">-- 구 선택 --</option></select>
+  </div>
+  <div class="field">
+    <label>업종</label>
+    <select id="selCategory"><option value="">-- 전체 업종 --</option></select>
+  </div>
+  <div class="field">
+    <label>가맹점명 검색</label>
+    <input type="text" id="txtName" placeholder="예: 스타벅스" maxlength="30">
+  </div>
+  <button class="btn-search" onclick="doSearch()">🔍 검색</button>
+</div>
+<div class="result-info" id="resultInfo">자치구를 선택하고 검색하면 지도에 가맹점이 표시됩니다.</div>
+<div class="main-layout">
+  <div id="map"></div>
+  <div class="list-panel" id="listPanel">
+    <div class="empty-state">
+      <div class="icon">📍</div>
+      <p>자치구와 업종을 선택한 후<br>검색 버튼을 눌러주세요.</p>
+    </div>
+  </div>
+</div>
+<footer>
+  출처: <a href="https://data.seoul.go.kr" target="_blank">서울 열린데이터 광장</a> — 서울사랑상품권 가맹점 (2025.8.22 기준) |
+  <a href="https://www.kogl.or.kr/info/licenseType4.do" target="_blank">공공누리 4유형</a> 적용 (상업적 이용 불가)
+</footer>
+<script>
+const GU_DATA = [
+  {ko:'강남구', en:'gangnam'}, {ko:'강동구', en:'gangdong'}, {ko:'강북구', en:'gangbuk'},
+  {ko:'강서구', en:'gangseo'}, {ko:'관악구', en:'gwanak'}, {ko:'광진구', en:'gwangjin'},
+  {ko:'구로구', en:'guro'}, {ko:'금천구', en:'geumcheon'}, {ko:'노원구', en:'nowon'},
+  {ko:'도봉구', en:'dobong'}, {ko:'동대문구', en:'dongdaemun'}, {ko:'동작구', en:'dongjak'},
+  {ko:'마포구', en:'mapo'}, {ko:'서대문구', en:'seodaemun'}, {ko:'서초구', en:'seocho'},
+  {ko:'성동구', en:'seongdong'}, {ko:'성북구', en:'seongbuk'}, {ko:'송파구', en:'songpa'},
+  {ko:'양천구', en:'yangcheon'}, {ko:'영등포구', en:'yeongdeungpo'}, {ko:'용산구', en:'yongsan'},
+  {ko:'은평구', en:'eunpyeong'}, {ko:'종로구', en:'jongno'}, {ko:'중구', en:'jung'},
+  {ko:'중랑구', en:'jungnang'}
+];
+
+const CATEGORIES = [
+  '가구/인테리어','가전/통신','건축/철물','기술/기능 교육','기업/기관','기타',
+  '기타교육기관','디자인/인쇄','문화/체육','보건/복지','부동산/임대','생활/리빙',
+  '식자재/유통','여행/숙박','예술 교육','외국어/언어','음식점/식음료업',
+  '의류/잡화','입시/교습학원','자동차/주유'
+];
+
+const GU_CENTER = {
+  gangnam:[37.5172,127.0473], gangdong:[37.5301,127.1238], gangbuk:[37.6396,127.0257],
+  gangseo:[37.5509,126.8495], gwanak:[37.4784,126.9516], gwangjin:[37.5385,127.0823],
+  guro:[37.4954,126.8874], geumcheon:[37.4519,126.9022], nowon:[37.6542,127.0568],
+  dobong:[37.6688,127.0471], dongdaemun:[37.5744,127.0397], dongjak:[37.5124,126.9393],
+  mapo:[37.5638,126.9084], seodaemun:[37.5791,126.9368], seocho:[37.4837,127.0324],
+  seongdong:[37.5633,127.0371], seongbuk:[37.5894,127.0167], songpa:[37.5145,127.1059],
+  yangcheon:[37.5270,126.8561], yeongdeungpo:[37.5260,126.8963], yongsan:[37.5384,126.9654],
+  eunpyeong:[37.6027,126.9291], jongno:[37.5730,126.9794], jung:[37.5640,126.9975],
+  jungnang:[37.6063,127.0930]
+};
+
+const selGu = document.getElementById('selGu');
+const selCat = document.getElementById('selCategory');
+
+GU_DATA.forEach(g => {
+  const o = document.createElement('option');
+  o.value = g.en; o.textContent = g.ko;
+  selGu.appendChild(o);
+});
+CATEGORIES.forEach(c => {
+  const o = document.createElement('option');
+  o.value = c; o.textContent = c;
+  selCat.appendChild(o);
+});
+
+const map = new kakao.maps.Map(document.getElementById('map'), {
+  center: new kakao.maps.LatLng(37.5665, 126.9780),
+  level: 8
+});
+const geocoder = new kakao.maps.services.Geocoder();
+let markers = [];
+let infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+let activeItem = null;
+
+function clearMarkers() {
+  markers.forEach(m => m && m.setMap(null));
+  markers = [];
+}
+
+function doSearch() {
+  const gu = selGu.value;
+  const cat = selCat.value;
+  const name = document.getElementById('txtName').value.trim();
+  if (!gu) { alert('자치구를 선택해주세요.'); return; }
+
+  document.getElementById('listPanel').innerHTML = '<div class="loading">⏳ 데이터를 불러오는 중...</div>';
+  document.getElementById('resultInfo').textContent = '검색 중...';
+
+  fetch(`data/${gu}.json`)
+    .then(r => r.json())
+    .then(data => {
+      let filtered = data;
+      if (cat) filtered = filtered.filter(d => d.c === cat);
+      if (name) filtered = filtered.filter(d => d.n.includes(name));
+      renderList(filtered);
+      geocodeAndPlot(filtered, gu);
+    })
+    .catch(() => {
+      document.getElementById('listPanel').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>데이터를 불러올 수 없습니다.</p></div>';
+    });
+}
+
+function renderList(data) {
+  const panel = document.getElementById('listPanel');
+  const info = document.getElementById('resultInfo');
+  const MAX = 200;
+  const shown = data.slice(0, MAX);
+  info.innerHTML = `<strong>${data.length.toLocaleString()}개</strong> 가맹점 검색됨 ${data.length > MAX ? `(목록 상위 ${MAX}개, 지도 최대 300개 표시)` : ''}`;
+  if (data.length === 0) {
+    panel.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>검색 결과가 없습니다.</p></div>';
+    return;
+  }
+  let html = `<div class="list-header">검색결과 ${data.length.toLocaleString()}개</div>`;
+  shown.forEach((d, i) => {
+    const addr = d.d ? `${d.a} ${d.d}` : d.a;
+    html += `<div class="store-item" id="item-${i}" onclick="focusItem(${i})">
+      <div class="store-name">${d.n}</div>
+      <span class="store-cat">${d.c}</span>
+      <div class="store-addr">${addr}</div>
+    </div>`;
+  });
+  panel.innerHTML = html;
+}
+
+function focusItem(idx) {
+  if (markers[idx]) {
+    map.setCenter(markers[idx].getPosition());
+    map.setLevel(3);
+    kakao.maps.event.trigger(markers[idx], 'click');
+  }
+  if (activeItem !== null) {
+    const prev = document.getElementById(`item-${activeItem}`);
+    if (prev) prev.classList.remove('active');
+  }
+  const el = document.getElementById(`item-${idx}`);
+  if (el) { el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  activeItem = idx;
+}
+
+function geocodeAndPlot(data, gu) {
+  clearMarkers();
+  infowindow.close();
+  const center = GU_CENTER[gu];
+  if (center) { map.setCenter(new kakao.maps.LatLng(center[0], center[1])); map.setLevel(5); }
+  const targets = data.slice(0, 300);
+  if (targets.length === 0) return;
+  targets.forEach((d, i) => {
+    setTimeout(() => {
+      geocoder.addressSearch(d.a, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          const pos = new kakao.maps.LatLng(result[0].y, result[0].x);
+          const marker = new kakao.maps.Marker({ map, position: pos, title: d.n });
+          const addr = d.d ? `${d.a} ${d.d}` : d.a;
+          const iw = `<div style="padding:10px;min-width:180px;font-size:13px;line-height:1.6">
+            <strong>${d.n}</strong><br>
+            <span style="color:#1a6dff;font-size:11px">${d.c}</span><br>
+            <span style="color:#666;font-size:12px">${addr}</span>
+          </div>`;
+          kakao.maps.event.addListener(marker, 'click', () => {
+            infowindow.setContent(iw);
+            infowindow.open(map, marker);
+          });
+          markers[i] = marker;
+        }
+      });
+    }, i * 120);
+  });
+}
+
+document.getElementById('txtName').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
+</script>
+</body>
+</html>
