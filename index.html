@@ -4,391 +4,281 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>서울·경기 지역화폐 가맹점 지도 | 서울페이·경기지역화폐 사용처 통합 검색</title>
-<meta name="description" content="서울사랑상품권(서울페이)과 경기도 지역화폐 가맹점을 한 곳에서 검색하세요. 내 위치 기반으로 주변 사용처를 지도에서 바로 확인할 수 있습니다.">
+<meta name="description" content="서울사랑상품권(서울페이)과 경기도 지역화폐 가맹점을 한 곳에서 검색하세요. 가맹점 클릭 시 카카오맵으로 바로 연결됩니다.">
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=78f5d9831b3863bca8398ad238c707e2&libraries=services,clusterer"></script>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #f5f6fa; color: #222; }
-header { background: #1a6dff; color: #fff; padding: 12px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-header h1 { font-size: 16px; font-weight: 700; }
-header p { font-size: 11px; opacity: 0.85; margin-top: 2px; }
-.tab-bar { display: flex; background: #fff; border-bottom: 2px solid #e0e0e0; }
-.tab { flex: 1; padding: 10px; text-align: center; font-size: 14px; font-weight: 700; cursor: pointer; color: #888; border-bottom: 3px solid transparent; }
-.tab.active { color: #1a6dff; border-bottom: 3px solid #1a6dff; background: #f8f9ff; }
-.search-panel { background: #fff; padding: 10px 14px; border-bottom: 1px solid #e0e0e0; display: flex; flex-wrap: wrap; gap: 7px; align-items: flex-end; }
-.field { display: flex; flex-direction: column; gap: 3px; }
-.field label { font-size: 11px; color: #666; font-weight: 600; }
-select, input[type=text] { padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; }
-select { min-width: 120px; }
-input[type=text] { min-width: 150px; }
-.btn { border: none; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; height: 35px; }
-.btn-search { background: #1a6dff; color: #fff; }
-.btn-location { background: #00b894; color: #fff; }
-.btn-reset { background: #f0f0f0; color: #555; }
-.result-info { padding: 7px 14px; font-size: 12px; color: #555; background: #f0f4ff; border-bottom: 1px solid #dde3f5; }
-.result-info strong { color: #1a6dff; }
-.main-layout { display: flex; height: calc(100vh - 168px); }
-#map { flex: 1; }
-.list-panel { width: 290px; overflow-y: auto; background: #fff; border-left: 1px solid #e0e0e0; display: flex; flex-direction: column; }
-.list-header { padding: 9px 13px; background: #f8f9fb; border-bottom: 1px solid #eee; font-size: 12px; font-weight: 700; color: #444; position: sticky; top: 0; z-index: 1; }
-.store-item { padding: 9px 13px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.15s; }
-.store-item:hover { background: #f0f4ff; }
-.store-item.active { background: #e8effe; border-left: 3px solid #1a6dff; }
-.store-name { font-size: 13px; font-weight: 700; color: #222; margin-bottom: 2px; }
-.badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-bottom: 3px; margin-right: 2px; }
-.badge-s { background: #e8f0ff; color: #1a6dff; }
-.badge-g { background: #e8fff5; color: #00875a; }
-.badge-c { background: #f5f5f5; color: #666; }
-.store-addr { font-size: 11px; color: #777; line-height: 1.5; }
-.empty-state { padding: 40px 16px; text-align: center; color: #aaa; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.empty-state .icon { font-size: 32px; margin-bottom: 10px; }
-.empty-state p { font-size: 13px; line-height: 1.8; }
-.loading { padding: 40px 16px; text-align: center; color: #888; font-size: 13px; flex: 1; display: flex; align-items: center; justify-content: center; }
-footer { background: #fff; border-top: 1px solid #e0e0e0; padding: 5px 14px; font-size: 10px; color: #999; text-align: center; }
-footer a { color: #1a6dff; text-decoration: none; }
-@media (max-width: 640px) {
-  .main-layout { flex-direction: column; height: auto; }
-  #map { height: 55vw; min-height: 280px; }
-  .list-panel { width: 100%; height: 38vh; border-left: none; border-top: 1px solid #e0e0e0; }
-  input[type=text] { min-width: 110px; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f5f6fa;color:#222;}
+header{background:#1a6dff;color:#fff;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+header h1{font-size:16px;font-weight:700;}
+header p{font-size:11px;opacity:.85;margin-top:2px;}
+.location-bar{background:#fff;padding:10px 14px;border-bottom:2px solid #e0e0e0;}
+.btn-big{width:100%;background:#00b894;color:#fff;border:none;padding:13px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;}
+.tip{font-size:11px;color:#999;text-align:center;margin-top:5px;}
+.tab-bar{display:flex;background:#fff;border-bottom:2px solid #e0e0e0;}
+.tab{flex:1;padding:9px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#888;border-bottom:3px solid transparent;}
+.tab.active{color:#1a6dff;border-bottom:3px solid #1a6dff;background:#f8f9ff;}
+.sp{background:#fff;padding:10px 14px;border-bottom:1px solid #e0e0e0;display:flex;flex-wrap:wrap;gap:7px;align-items:flex-end;}
+.field{display:flex;flex-direction:column;gap:3px;}
+.field label{font-size:11px;color:#666;font-weight:600;}
+select,input[type=text]{padding:7px 10px;border:1px solid #ccc;border-radius:6px;font-size:13px;background:#fff;}
+select{min-width:120px;}
+input[type=text]{min-width:140px;}
+.btn{border:none;padding:7px 14px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;height:35px;}
+.btn-s{background:#1a6dff;color:#fff;}
+.btn-r{background:#f0f0f0;color:#555;}
+.ri{padding:7px 14px;font-size:12px;color:#555;background:#f0f4ff;border-bottom:1px solid #dde3f5;}
+.ri strong{color:#1a6dff;}
+.ml{display:flex;height:calc(100vh - 228px);}
+#map{flex:1;}
+.lp{width:290px;overflow-y:auto;background:#fff;border-left:1px solid #e0e0e0;display:flex;flex-direction:column;}
+.lh{padding:9px 13px;background:#f8f9fb;border-bottom:1px solid #eee;font-size:12px;font-weight:700;color:#444;position:sticky;top:0;z-index:1;}
+.si{padding:9px 13px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .15s;}
+.si:hover{background:#f0f4ff;}
+.si.active{background:#e8effe;border-left:3px solid #1a6dff;}
+.sn{font-size:13px;font-weight:700;color:#222;margin-bottom:2px;}
+.bd{display:inline-block;font-size:10px;padding:1px 6px;border-radius:8px;margin-bottom:3px;margin-right:2px;}
+.bs{background:#e8f0ff;color:#1a6dff;}
+.bg{background:#e8fff5;color:#00875a;}
+.bc{background:#f5f5f5;color:#666;}
+.sa{font-size:11px;color:#777;line-height:1.5;}
+.kl{display:inline-block;margin-top:5px;background:#fee500;color:#333;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none;}
+.es{padding:30px 16px;text-align:center;color:#aaa;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.es .ic{font-size:32px;margin-bottom:10px;}
+.es p{font-size:13px;line-height:1.8;}
+.ld{padding:30px 16px;text-align:center;color:#888;font-size:13px;flex:1;display:flex;align-items:center;justify-content:center;}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center;}
+.ov.show{display:flex;}
+.gb{background:#fff;border-radius:14px;padding:22px 20px;max-width:320px;width:90%;text-align:center;}
+.gb h3{font-size:16px;font-weight:700;margin-bottom:10px;}
+.gb p{font-size:13px;color:#555;line-height:1.7;margin-bottom:12px;}
+.gs{background:#f8f9ff;border-radius:8px;padding:12px 12px 12px 28px;text-align:left;margin-bottom:14px;}
+.gs li{font-size:12px;color:#444;line-height:2;}
+.gc{background:#1a6dff;color:#fff;border:none;padding:10px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;width:100%;}
+footer{background:#fff;border-top:1px solid #e0e0e0;padding:5px 14px;font-size:10px;color:#999;text-align:center;}
+footer a{color:#1a6dff;text-decoration:none;}
+@media(max-width:640px){
+  .ml{flex-direction:column;height:auto;}
+  #map{height:55vw;min-height:260px;}
+  .lp{width:100%;height:38vh;border-left:none;border-top:1px solid #e0e0e0;}
 }
 </style>
 </head>
 <body>
 <header>
-  <h1>🗺️ 서울·경기 지역화폐 가맹점 통합 지도</h1>
+  <h1>🗺️ 서울·경기 지역화폐 가맹점 지도</h1>
   <p>서울페이 · 경기지역화폐 사용처를 한 곳에서 검색하세요</p>
 </header>
+<div class="location-bar">
+  <button class="btn-big" onclick="searchByLocation()">📍 내 주변 가맹점 바로 찾기</button>
+  <p class="tip">가맹점 클릭 시 카카오맵으로 연결 · 위치검색은 PC 크롬 권장</p>
+</div>
 <div class="tab-bar">
-  <div class="tab active" id="tab-seoul" onclick="switchTab('seoul')">🔵 서울사랑상품권</div>
-  <div class="tab" id="tab-gg" onclick="switchTab('gg')">🟢 경기지역화폐</div>
+  <div class="tab active" id="ts" onclick="switchTab('seoul')">🔵 서울사랑상품권</div>
+  <div class="tab" id="tg" onclick="switchTab('gg')">🟢 경기지역화폐</div>
 </div>
-<div class="search-panel">
-  <div class="field">
-    <label id="labelRegion">자치구</label>
-    <select id="selRegion"><option value="">-- 전체 --</option></select>
-  </div>
-  <div class="field" id="fieldCat">
-    <label>업종</label>
-    <select id="selCat"><option value="">-- 전체 업종 --</option></select>
-  </div>
-  <div class="field">
-    <label>가맹점명</label>
-    <input type="text" id="txtName" placeholder="예: 스타벅스, 커피, 편의점" maxlength="30">
-  </div>
-  <button class="btn btn-search" onclick="doSearch()">🔍 검색</button>
-  <button class="btn btn-location" onclick="searchByLocation()">📍 내 주변</button>
-  <button class="btn btn-reset" onclick="resetAll()">초기화</button>
+<div class="sp">
+  <div class="field"><label id="lr">자치구</label><select id="sr"><option value="">-- 전체 --</option></select></div>
+  <div class="field" id="fc"><label>업종</label><select id="sc"><option value="">-- 전체 업종 --</option></select></div>
+  <div class="field"><label>가맹점명</label><input type="text" id="tn" placeholder="예: 스타벅스, 커피" maxlength="30"></div>
+  <button class="btn btn-s" onclick="doSearch()">🔍 검색</button>
+  <button class="btn btn-r" onclick="resetAll()">초기화</button>
 </div>
-<div class="result-info" id="resultInfo">탭 선택 후 지역·가맹점명 검색 또는 <strong>📍 내 주변</strong> 버튼을 눌러주세요.</div>
-<div class="main-layout">
-  <div id="map"></div>
-  <div class="list-panel" id="listPanel">
-    <div class="empty-state"><div class="icon">🗺️</div><p>서울 또는 경기 탭 선택 후<br>검색하거나 <strong>내 주변</strong>을 눌러주세요.</p></div>
+<div class="ri" id="ri">📍 <strong>내 주변 바로 찾기</strong>를 누르거나, 탭에서 지역을 선택해 검색하세요.</div>
+<div class="ml"><div id="map"></div>
+<div class="lp" id="lp"><div class="es"><div class="ic">📍</div><p><strong>내 주변 바로 찾기</strong>를<br>눌러주세요.</p></div></div></div>
+<footer>서울: <a href="https://data.seoul.go.kr" target="_blank">서울 열린데이터 광장</a> (2025.8) · 경기: <a href="https://data.gg.go.kr" target="_blank">경기데이터드림</a> (2026.2) | <a href="https://www.kogl.or.kr/info/licenseType4.do" target="_blank">공공누리 4유형</a></footer>
+<div class="ov" id="ov">
+  <div class="gb">
+    <h3>📍 위치 권한 안내</h3>
+    <p>앱 내 브라우저에서는 위치 권한이<br>제한될 수 있습니다.</p>
+    <ul class="gs"><li>하단 <strong>외부 브라우저로 열기</strong> 선택</li><li><strong>크롬/사파리</strong>로 직접 접속</li><li>위치 권한 팝업에서 <strong>허용</strong> 클릭</li></ul>
+    <p style="font-size:12px;color:#999;margin-bottom:14px">또는 아래 지역 선택으로 직접 검색하세요.</p>
+    <button class="gc" onclick="document.getElementById('ov').classList.remove('show')">확인</button>
   </div>
 </div>
-<footer>
-  서울: <a href="https://data.seoul.go.kr" target="_blank">서울 열린데이터 광장</a> (2025.8 기준) &nbsp;·&nbsp;
-  경기: <a href="https://data.gg.go.kr" target="_blank">경기데이터드림</a> (2026.2 기준) &nbsp;|&nbsp;
-  <a href="https://www.kogl.or.kr/info/licenseType4.do" target="_blank">공공누리 4유형</a>
-</footer>
-
 <script>
-// ── 서울 구 데이터 ──
-const SEOUL = [
-  {ko:'강남구',en:'gangnam',lat:37.5172,lng:127.0473},
-  {ko:'강동구',en:'gangdong',lat:37.5301,lng:127.1238},
-  {ko:'강북구',en:'gangbuk',lat:37.6396,lng:127.0257},
-  {ko:'강서구',en:'gangseo',lat:37.5509,lng:126.8495},
-  {ko:'관악구',en:'gwanak',lat:37.4784,lng:126.9516},
-  {ko:'광진구',en:'gwangjin',lat:37.5385,lng:127.0823},
-  {ko:'구로구',en:'guro',lat:37.4954,lng:126.8874},
-  {ko:'금천구',en:'geumcheon',lat:37.4519,lng:126.9022},
-  {ko:'노원구',en:'nowon',lat:37.6542,lng:127.0568},
-  {ko:'도봉구',en:'dobong',lat:37.6688,lng:127.0471},
-  {ko:'동대문구',en:'dongdaemun',lat:37.5744,lng:127.0397},
-  {ko:'동작구',en:'dongjak',lat:37.5124,lng:126.9393},
-  {ko:'마포구',en:'mapo',lat:37.5638,lng:126.9084},
-  {ko:'서대문구',en:'seodaemun',lat:37.5791,lng:126.9368},
-  {ko:'서초구',en:'seocho',lat:37.4837,lng:127.0324},
-  {ko:'성동구',en:'seongdong',lat:37.5633,lng:127.0371},
-  {ko:'성북구',en:'seongbuk',lat:37.5894,lng:127.0167},
-  {ko:'송파구',en:'songpa',lat:37.5145,lng:127.1059},
-  {ko:'양천구',en:'yangcheon',lat:37.5270,lng:126.8561},
-  {ko:'영등포구',en:'yeongdeungpo',lat:37.5260,lng:126.8963},
-  {ko:'용산구',en:'yongsan',lat:37.5384,lng:126.9654},
-  {ko:'은평구',en:'eunpyeong',lat:37.6027,lng:126.9291},
-  {ko:'종로구',en:'jongno',lat:37.5730,lng:126.9794},
-  {ko:'중구',en:'jung',lat:37.5640,lng:126.9975},
+const SEOUL=[
+  {ko:'강남구',en:'gangnam',lat:37.5172,lng:127.0473},{ko:'강동구',en:'gangdong',lat:37.5301,lng:127.1238},
+  {ko:'강북구',en:'gangbuk',lat:37.6396,lng:127.0257},{ko:'강서구',en:'gangseo',lat:37.5509,lng:126.8495},
+  {ko:'관악구',en:'gwanak',lat:37.4784,lng:126.9516},{ko:'광진구',en:'gwangjin',lat:37.5385,lng:127.0823},
+  {ko:'구로구',en:'guro',lat:37.4954,lng:126.8874},{ko:'금천구',en:'geumcheon',lat:37.4519,lng:126.9022},
+  {ko:'노원구',en:'nowon',lat:37.6542,lng:127.0568},{ko:'도봉구',en:'dobong',lat:37.6688,lng:127.0471},
+  {ko:'동대문구',en:'dongdaemun',lat:37.5744,lng:127.0397},{ko:'동작구',en:'dongjak',lat:37.5124,lng:126.9393},
+  {ko:'마포구',en:'mapo',lat:37.5638,lng:126.9084},{ko:'서대문구',en:'seodaemun',lat:37.5791,lng:126.9368},
+  {ko:'서초구',en:'seocho',lat:37.4837,lng:127.0324},{ko:'성동구',en:'seongdong',lat:37.5633,lng:127.0371},
+  {ko:'성북구',en:'seongbuk',lat:37.5894,lng:127.0167},{ko:'송파구',en:'songpa',lat:37.5145,lng:127.1059},
+  {ko:'양천구',en:'yangcheon',lat:37.5270,lng:126.8561},{ko:'영등포구',en:'yeongdeungpo',lat:37.5260,lng:126.8963},
+  {ko:'용산구',en:'yongsan',lat:37.5384,lng:126.9654},{ko:'은평구',en:'eunpyeong',lat:37.6027,lng:126.9291},
+  {ko:'종로구',en:'jongno',lat:37.5730,lng:126.9794},{ko:'중구',en:'jung',lat:37.5640,lng:126.9975},
   {ko:'중랑구',en:'jungnang',lat:37.6063,lng:127.0930}
 ];
-
-// ── 경기 시군 데이터 ──
-const GG = [
-  {ko:'가평군',en:'gapyeong',lat:37.8315,lng:127.5099},
-  {ko:'고양시',en:'goyang',lat:37.6584,lng:126.8319},
-  {ko:'과천시',en:'gwacheon',lat:37.4292,lng:126.9876},
-  {ko:'광명시',en:'gwangmyeong',lat:37.4783,lng:126.8650},
-  {ko:'광주시',en:'gwangju',lat:37.4296,lng:127.2557},
-  {ko:'구리시',en:'guri',lat:37.5943,lng:127.1295},
-  {ko:'군포시',en:'gunpo',lat:37.3616,lng:126.9352},
-  {ko:'김포시',en:'gimpo',lat:37.6152,lng:126.7159},
-  {ko:'남양주시',en:'namyangju',lat:37.6360,lng:127.2161},
-  {ko:'동두천시',en:'dongducheon',lat:37.9036,lng:127.0605},
-  {ko:'부천시',en:'bucheon',lat:37.5034,lng:126.7660},
-  {ko:'성남시',en:'seongnam',lat:37.4196,lng:127.1267},
-  {ko:'수원시',en:'suwon',lat:37.2636,lng:127.0286},
-  {ko:'시흥시',en:'siheung',lat:37.3799,lng:126.8031},
-  {ko:'안산시',en:'ansan',lat:37.3219,lng:126.8309},
-  {ko:'안성시',en:'anseong',lat:37.0078,lng:127.2798},
-  {ko:'안양시',en:'anyang',lat:37.3943,lng:126.9568},
-  {ko:'양주시',en:'yangju',lat:37.7857,lng:127.0456},
-  {ko:'양평군',en:'yangpyeong',lat:37.4914,lng:127.4878},
-  {ko:'여주시',en:'yeoju',lat:37.2982,lng:127.6376},
-  {ko:'연천군',en:'yeoncheon',lat:38.0967,lng:127.0749},
-  {ko:'오산시',en:'osan',lat:37.1498,lng:127.0771},
-  {ko:'용인시',en:'yongin',lat:37.2411,lng:127.1775},
-  {ko:'의왕시',en:'uiwang',lat:37.3448,lng:126.9682},
-  {ko:'의정부시',en:'uijeongbu',lat:37.7382,lng:127.0337},
-  {ko:'이천시',en:'icheon',lat:37.2720,lng:127.4347},
-  {ko:'파주시',en:'paju',lat:37.7600,lng:126.7800},
-  {ko:'평택시',en:'pyeongtaek',lat:36.9921,lng:127.1129},
-  {ko:'포천시',en:'pocheon',lat:37.8949,lng:127.2003},
-  {ko:'하남시',en:'hanam',lat:37.5391,lng:127.2148},
+const GG=[
+  {ko:'가평군',en:'gapyeong',lat:37.8315,lng:127.5099},{ko:'고양시',en:'goyang',lat:37.6584,lng:126.8319},
+  {ko:'과천시',en:'gwacheon',lat:37.4292,lng:126.9876},{ko:'광명시',en:'gwangmyeong',lat:37.4783,lng:126.8650},
+  {ko:'광주시',en:'gwangju',lat:37.4296,lng:127.2557},{ko:'구리시',en:'guri',lat:37.5943,lng:127.1295},
+  {ko:'군포시',en:'gunpo',lat:37.3616,lng:126.9352},{ko:'김포시',en:'gimpo',lat:37.6152,lng:126.7159},
+  {ko:'남양주시',en:'namyangju',lat:37.6360,lng:127.2161},{ko:'동두천시',en:'dongducheon',lat:37.9036,lng:127.0605},
+  {ko:'부천시',en:'bucheon',lat:37.5034,lng:126.7660},{ko:'성남시',en:'seongnam',lat:37.4196,lng:127.1267},
+  {ko:'수원시',en:'suwon',lat:37.2636,lng:127.0286},{ko:'시흥시',en:'siheung',lat:37.3799,lng:126.8031},
+  {ko:'안산시',en:'ansan',lat:37.3219,lng:126.8309},{ko:'안성시',en:'anseong',lat:37.0078,lng:127.2798},
+  {ko:'안양시',en:'anyang',lat:37.3943,lng:126.9568},{ko:'양주시',en:'yangju',lat:37.7857,lng:127.0456},
+  {ko:'양평군',en:'yangpyeong',lat:37.4914,lng:127.4878},{ko:'여주시',en:'yeoju',lat:37.2982,lng:127.6376},
+  {ko:'연천군',en:'yeoncheon',lat:38.0967,lng:127.0749},{ko:'오산시',en:'osan',lat:37.1498,lng:127.0771},
+  {ko:'용인시',en:'yongin',lat:37.2411,lng:127.1775},{ko:'의왕시',en:'uiwang',lat:37.3448,lng:126.9682},
+  {ko:'의정부시',en:'uijeongbu',lat:37.7382,lng:127.0337},{ko:'이천시',en:'icheon',lat:37.2720,lng:127.4347},
+  {ko:'파주시',en:'paju',lat:37.7600,lng:126.7800},{ko:'평택시',en:'pyeongtaek',lat:36.9921,lng:127.1129},
+  {ko:'포천시',en:'pocheon',lat:37.8949,lng:127.2003},{ko:'하남시',en:'hanam',lat:37.5391,lng:127.2148},
   {ko:'화성시',en:'hwaseong',lat:37.1994,lng:126.8317}
 ];
+const SC=['가구/인테리어','가전/통신','건축/철물','기술/기능 교육','기업/기관','기타','기타교육기관','디자인/인쇄','문화/체육','보건/복지','부동산/임대','생활/리빙','식자재/유통','여행/숙박','예술 교육','외국어/언어','음식점/식음료업','의류/잡화','입시/교습학원','자동차/주유'];
+let tab='seoul',markers=[],iw,myM=null,cache={},ai=null;
+const map=new kakao.maps.Map(document.getElementById('map'),{center:new kakao.maps.LatLng(37.5665,126.9780),level:8});
+const geo=new kakao.maps.services.Geocoder();
+iw=new kakao.maps.InfoWindow({zIndex:1});
 
-const SEOUL_CATS = ['가구/인테리어','가전/통신','건축/철물','기술/기능 교육','기업/기관','기타','기타교육기관','디자인/인쇄','문화/체육','보건/복지','부동산/임대','생활/리빙','식자재/유통','여행/숙박','예술 교육','외국어/언어','음식점/식음료업','의류/잡화','입시/교습학원','자동차/주유'];
+function switchTab(t){
+  tab=t;
+  document.getElementById('ts').className='tab'+(t==='seoul'?' active':'');
+  document.getElementById('tg').className='tab'+(t==='gg'?' active':'');
+  const sr=document.getElementById('sr'),sc=document.getElementById('sc');
+  sr.innerHTML='<option value="">-- 전체 --</option>';
+  sc.innerHTML='<option value="">-- 전체 업종 --</option>';
+  (t==='seoul'?SEOUL:GG).forEach(x=>{const o=document.createElement('option');o.value=x.en;o.textContent=x.ko;sr.appendChild(o);});
+  if(t==='seoul'){
+    document.getElementById('lr').textContent='자치구';
+    document.getElementById('fc').style.display='flex';
+    SC.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sc.appendChild(o);});
+  }else{document.getElementById('lr').textContent='시군';document.getElementById('fc').style.display='none';}
+}
+function clrM(){markers.forEach(m=>m&&m.setMap(null));markers=[];}
+async function load(en){
+  if(cache[en])return cache[en];
+  const isS=SEOUL.some(x=>x.en===en);
+  const r=await fetch(isS?`data/${en}.json`:`data_gg/${en}.json`);
+  const d=await r.json();cache[en]=d;return d;
+}
+function near(lat,lng,list){let m=Infinity,r=null;list.forEach(x=>{const d=Math.pow(lat-x.lat,2)+Math.pow(lng-x.lng,2);if(d<m){m=d;r=x;}});return r;}
 
-let tab = 'seoul';
-let markers = [], iw, myMarker = null, cache = {}, activeIdx = null;
-
-const map = new kakao.maps.Map(document.getElementById('map'), {
-  center: new kakao.maps.LatLng(37.5665, 126.9780), level: 8
-});
-const geo = new kakao.maps.services.Geocoder();
-iw = new kakao.maps.InfoWindow({zIndex:1});
-
-// ── 탭 전환 ──
-function switchTab(t) {
-  tab = t;
-  document.getElementById('tab-seoul').className = 'tab' + (t==='seoul'?' active':'');
-  document.getElementById('tab-gg').className = 'tab' + (t==='gg'?' active':'');
-
-  const selR = document.getElementById('selRegion');
-  const selC = document.getElementById('selCat');
-  selR.innerHTML = '<option value="">-- 전체 --</option>';
-  selC.innerHTML = '<option value="">-- 전체 업종 --</option>';
-
-  const list = t === 'seoul' ? SEOUL : GG;
-  list.forEach(x => {
-    const o = document.createElement('option');
-    o.value = x.en; o.textContent = x.ko; selR.appendChild(o);
-  });
-
-  if (t === 'seoul') {
-    document.getElementById('labelRegion').textContent = '자치구';
-    document.getElementById('fieldCat').style.display = 'flex';
-    SEOUL_CATS.forEach(c => {
-      const o = document.createElement('option');
-      o.value = c; o.textContent = c; selC.appendChild(o);
+function searchByLocation(){
+  if(!navigator.geolocation){document.getElementById('ov').classList.add('show');return;}
+  document.getElementById('ri').textContent='📍 현재 위치를 가져오는 중...';
+  document.getElementById('lp').innerHTML='<div class="ld">📍 위치 확인 중...</div>';
+  navigator.geolocation.getCurrentPosition(async(pos)=>{
+    const lat=pos.coords.latitude,lng=pos.coords.longitude;
+    if(myM)myM.setMap(null);
+    myM=new kakao.maps.Marker({map,position:new kakao.maps.LatLng(lat,lng),
+      image:new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',new kakao.maps.Size(24,35))});
+    map.setCenter(new kakao.maps.LatLng(lat,lng));map.setLevel(5);
+    geo.coord2RegionCode(lng,lat,async(res,st)=>{
+      let key=null,name=null,isS=true;
+      if(st===kakao.maps.services.Status.OK){
+        const r=res.find(x=>x.region_type==='B');
+        if(r){
+          if(r.region_1depth_name==='서울'){const f=SEOUL.find(x=>x.ko===r.region_2depth_name);if(f){key=f.en;name=f.ko;isS=true;}}
+          else if(r.region_1depth_name==='경기'){const f=GG.find(x=>x.ko===r.region_2depth_name);if(f){key=f.en;name=f.ko;isS=false;}}
+        }
+      }
+      if(!key){
+        const ns=near(lat,lng,SEOUL),ng=near(lat,lng,GG);
+        const ds=Math.pow(lat-ns.lat,2)+Math.pow(lng-ns.lng,2),dg=Math.pow(lat-ng.lat,2)+Math.pow(lng-ng.lng,2);
+        if(ds<=dg){key=ns.en;name=ns.ko;isS=true;}else{key=ng.en;name=ng.ko;isS=false;}
+      }
+      switchTab(isS?'seoul':'gg');tab=isS?'seoul':'gg';
+      document.getElementById('sr').value=key;
+      try{const data=await load(key);rl(data,isS,name);pl(data,isS);}
+      catch(e){document.getElementById('lp').innerHTML='<div class="es"><div class="ic">⚠️</div><p>데이터를 불러올 수 없습니다.</p></div>';}
     });
-    map.setCenter(new kakao.maps.LatLng(37.5665, 126.9780)); map.setLevel(8);
-  } else {
-    document.getElementById('labelRegion').textContent = '시군';
-    document.getElementById('fieldCat').style.display = 'none';
-    map.setCenter(new kakao.maps.LatLng(37.4138, 127.2000)); map.setLevel(10);
-  }
-
-  clearAll();
+  },(e)=>{
+    document.getElementById('ov').classList.add('show');
+    document.getElementById('ri').textContent='위치 권한이 필요합니다. 지역을 선택해 검색하세요.';
+    document.getElementById('lp').innerHTML='<div class="es"><div class="ic">⚠️</div><p>위치 권한을 허용하거나<br>지역을 직접 선택해주세요.</p></div>';
+  },{timeout:8000,maximumAge:60000});
 }
 
-function clearAll() {
-  clearMarkers(); iw.close();
-  document.getElementById('txtName').value = '';
-  document.getElementById('resultInfo').textContent = '탭 선택 후 지역·가맹점명 검색 또는 📍 내 주변 버튼을 눌러주세요.';
-  document.getElementById('listPanel').innerHTML = '<div class="empty-state"><div class="icon">🗺️</div><p>지역을 선택하거나<br><strong>내 주변</strong>을 눌러주세요.</p></div>';
-  activeIdx = null;
-}
-
-function clearMarkers() { markers.forEach(m => m && m.setMap(null)); markers = []; }
-
-// ── 데이터 로드 ──
-async function load(en) {
-  if (cache[en]) return cache[en];
-  const isSeoul = SEOUL.some(x => x.en === en);
-  const path = isSeoul ? `data/${en}.json` : `data_gg/${en}.json`;
-  const r = await fetch(path);
-  const d = await r.json();
-  cache[en] = d;
-  return d;
-}
-
-// ── 검색 ──
-async function doSearch() {
-  const region = document.getElementById('selRegion').value;
-  const cat = document.getElementById('selCat').value;
-  const name = document.getElementById('txtName').value.trim();
-  const isSeoul = tab === 'seoul';
-
-  if (!region && !name) { alert('지역을 선택하거나 가맹점명을 입력해주세요.'); return; }
-
-  setLoading();
-
-  try {
-    let result = [];
-    if (region) {
-      let data = await load(region);
-      if (cat && isSeoul) data = data.filter(d => d.c === cat);
-      if (name) data = data.filter(d => d.n.includes(name));
-      result = data;
-      const list = isSeoul ? SEOUL : GG;
-      const found = list.find(x => x.en === region);
-      if (found) { map.setCenter(new kakao.maps.LatLng(found.lat, found.lng)); map.setLevel(isSeoul ? 5 : 7); }
-    } else {
-      document.getElementById('resultInfo').textContent = '⏳ 전체 검색 중...';
-      const list = isSeoul ? SEOUL : GG;
-      const all = await Promise.all(list.map(x => load(x.en)));
-      all.forEach(data => {
-        let sub = data;
-        if (cat && isSeoul) sub = sub.filter(d => d.c === cat);
-        if (name) sub = sub.filter(d => d.n.includes(name));
-        result = result.concat(sub);
-      });
+async function doSearch(){
+  const region=document.getElementById('sr').value,cat=document.getElementById('sc').value,name=document.getElementById('tn').value.trim(),isS=tab==='seoul';
+  if(!region&&!name){alert('지역을 선택하거나 가맹점명을 입력해주세요.');return;}
+  document.getElementById('lp').innerHTML='<div class="ld">⏳ 검색 중...</div>';
+  document.getElementById('ri').textContent='검색 중...';
+  try{
+    let result=[];
+    if(region){
+      let data=await load(region);
+      if(cat&&isS)data=data.filter(d=>d.c===cat);
+      if(name)data=data.filter(d=>d.n.includes(name));
+      result=data;
+      const list=isS?SEOUL:GG,found=list.find(x=>x.en===region);
+      if(found){map.setCenter(new kakao.maps.LatLng(found.lat,found.lng));map.setLevel(isS?5:7);}
+    }else{
+      document.getElementById('ri').textContent='⏳ 전체 검색 중...';
+      const all=await Promise.all((isS?SEOUL:GG).map(x=>load(x.en)));
+      all.forEach(data=>{let sub=data;if(cat&&isS)sub=sub.filter(d=>d.c===cat);if(name)sub=sub.filter(d=>d.n.includes(name));result=result.concat(sub);});
     }
-    renderList(result, isSeoul);
-    plot(result, isSeoul);
-  } catch(e) {
-    document.getElementById('listPanel').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>데이터를 불러올 수 없습니다.</p></div>';
-  }
+    rl(result,isS,'');pl(result,isS);
+  }catch(e){document.getElementById('lp').innerHTML='<div class="es"><div class="ic">⚠️</div><p>데이터를 불러올 수 없습니다.</p></div>';}
 }
 
-// ── 목록 렌더 ──
-function renderList(data, isSeoul) {
-  const MAX = 200;
-  document.getElementById('resultInfo').innerHTML = `<strong>${data.length.toLocaleString()}개</strong> 가맹점 검색됨 ${data.length > MAX ? `(목록 ${MAX}개, 지도 300개)` : ''}`;
-  if (!data.length) {
-    document.getElementById('listPanel').innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>검색 결과가 없습니다.</p></div>';
-    return;
-  }
-  const bc = isSeoul ? 'badge-s' : 'badge-g';
-  const bt = isSeoul ? '서울페이' : '경기페이';
-  let html = `<div class="list-header">검색결과 ${data.length.toLocaleString()}개</div>`;
-  data.slice(0, MAX).forEach((d, i) => {
-    const addr = d.d ? `${d.a} ${d.d}` : d.a;
-    html += `<div class="store-item" id="si-${i}" onclick="focus(${i})">
-      <div class="store-name">${d.n}</div>
-      <span class="badge ${bc}">${bt}</span><span class="badge badge-c">${d.c}</span>
-      <div class="store-addr">${addr}</div>
+function rl(data,isS,rn){
+  const MAX=200,bt=isS?'서울페이':'경기페이',bc=isS?'bs':'bg';
+  document.getElementById('ri').innerHTML=`<strong>${data.length.toLocaleString()}개</strong> ${isS?'서울페이':'경기지역화폐'} 가맹점${rn?' ('+rn+')':''} ${data.length>MAX?`(목록 ${MAX}개, 지도 300개)`:''} — 클릭 시 카카오맵 연결`;
+  if(!data.length){document.getElementById('lp').innerHTML='<div class="es"><div class="ic">🔍</div><p>검색 결과가 없습니다.</p></div>';return;}
+  let html=`<div class="lh">가맹점 ${data.length.toLocaleString()}개 · 클릭 → 카카오맵</div>`;
+  data.slice(0,MAX).forEach((d,i)=>{
+    const addr=d.d?`${d.a} ${d.d}`:d.a;
+    const ku=`https://map.kakao.com/link/search/${encodeURIComponent(d.n+' '+d.a)}`;
+    html+=`<div class="si" id="si-${i}" onclick="fi(${i})">
+      <div class="sn">${d.n}</div>
+      <span class="bd ${bc}">${bt}</span><span class="bd bc">${d.c}</span>
+      <div class="sa">${addr}</div>
+      <a class="kl" href="${ku}" target="_blank" onclick="event.stopPropagation()">🗺 카카오맵에서 보기</a>
     </div>`;
   });
-  document.getElementById('listPanel').innerHTML = html;
+  document.getElementById('lp').innerHTML=html;
 }
 
-// ── 마커 표시 ──
-function plot(data, isSeoul) {
-  clearMarkers(); iw.close(); activeIdx = null;
-  const color = isSeoul ? '#1a6dff' : '#00875a';
-  const label = isSeoul ? '서울페이' : '경기지역화폐';
-  data.slice(0, 300).forEach((d, i) => {
-    setTimeout(() => {
-      geo.addressSearch(d.a, (res, st) => {
-        if (st === kakao.maps.services.Status.OK) {
-          const pos = new kakao.maps.LatLng(res[0].y, res[0].x);
-          const m = new kakao.maps.Marker({map, position:pos, title:d.n});
-          const addr = d.d ? `${d.a} ${d.d}` : d.a;
-          const iwc = `<div style="padding:10px;min-width:180px;font-size:13px;line-height:1.7">
+function pl(data,isS){
+  clrM();iw.close();ai=null;
+  const col=isS?'#1a6dff':'#00875a',lbl=isS?'서울페이':'경기지역화폐';
+  data.slice(0,300).forEach((d,i)=>{
+    setTimeout(()=>{
+      geo.addressSearch(d.a,(res,st)=>{
+        if(st===kakao.maps.services.Status.OK){
+          const pos=new kakao.maps.LatLng(res[0].y,res[0].x);
+          const m=new kakao.maps.Marker({map,position:pos,title:d.n});
+          const addr=d.d?`${d.a} ${d.d}`:d.a;
+          const ku=`https://map.kakao.com/link/search/${encodeURIComponent(d.n+' '+d.a)}`;
+          const iwc=`<div style="padding:10px;min-width:200px;font-size:13px;line-height:1.8">
             <strong>${d.n}</strong><br>
-            <span style="color:${color};font-size:11px">${label} · ${d.c}</span><br>
-            <span style="color:#666;font-size:11px">${addr}</span>
+            <span style="color:${col};font-size:11px">${lbl} · ${d.c}</span><br>
+            <span style="color:#666;font-size:11px">${addr}</span><br>
+            <a href="${ku}" target="_blank" style="display:inline-block;margin-top:6px;background:#fee500;color:#3c1e1e;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none">🗺 카카오맵에서 보기</a>
           </div>`;
-          kakao.maps.event.addListener(m, 'click', () => { iw.setContent(iwc); iw.open(map, m); });
-          markers[i] = m;
+          kakao.maps.event.addListener(m,'click',()=>{iw.setContent(iwc);iw.open(map,m);});
+          markers[i]=m;
         }
       });
-    }, i * 100);
+    },i*100);
   });
 }
 
-function focus(idx) {
-  if (markers[idx]) { map.setCenter(markers[idx].getPosition()); map.setLevel(3); kakao.maps.event.trigger(markers[idx], 'click'); }
-  if (activeIdx !== null) { const p = document.getElementById(`si-${activeIdx}`); if(p) p.classList.remove('active'); }
-  const el = document.getElementById(`si-${idx}`);
-  if (el) { el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'nearest'}); }
-  activeIdx = idx;
+function fi(idx){
+  if(markers[idx]){map.setCenter(markers[idx].getPosition());map.setLevel(3);kakao.maps.event.trigger(markers[idx],'click');}
+  if(ai!==null){const p=document.getElementById(`si-${ai}`);if(p)p.classList.remove('active');}
+  const el=document.getElementById(`si-${idx}`);
+  if(el){el.classList.add('active');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  ai=idx;
 }
 
-// ── 내 주변 ──
-function searchByLocation() {
-  if (!navigator.geolocation) { alert('위치 서비스를 지원하지 않습니다.'); return; }
-  document.getElementById('resultInfo').textContent = '📍 현재 위치를 가져오는 중...';
-  setLoading();
-  const isSeoul = tab === 'seoul';
-
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-    const lat = pos.coords.latitude, lng = pos.coords.longitude;
-    if (myMarker) myMarker.setMap(null);
-    const myPos = new kakao.maps.LatLng(lat, lng);
-    myMarker = new kakao.maps.Marker({
-      map, position: myPos,
-      image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(24,35))
-    });
-    map.setCenter(myPos); map.setLevel(isSeoul ? 5 : 7);
-
-    geo.coord2RegionCode(lng, lat, async (res, st) => {
-      let key = null, name = null;
-      if (st === kakao.maps.services.Status.OK) {
-        const r = res.find(x => x.region_type === 'B');
-        if (r) {
-          const list = isSeoul ? SEOUL : GG;
-          const depth1 = isSeoul ? '서울' : '경기';
-          if (r.region_1depth_name === depth1) {
-            const found = list.find(x => x.ko === r.region_2depth_name);
-            if (found) { key = found.en; name = found.ko; }
-          }
-        }
-      }
-      // 못 찾으면 가장 가까운 지역 자동 선택
-      if (!key) {
-        const list = isSeoul ? SEOUL : GG;
-        let minD = Infinity;
-        list.forEach(x => {
-          const d = Math.pow(lat-x.lat,2)+Math.pow(lng-x.lng,2);
-          if (d < minD) { minD = d; key = x.en; name = x.ko; }
-        });
-      }
-      document.getElementById('selRegion').value = key;
-      try {
-        let data = await load(key);
-        const cat = document.getElementById('selCat').value;
-        const nm = document.getElementById('txtName').value.trim();
-        if (cat && isSeoul) data = data.filter(d => d.c === cat);
-        if (nm) data = data.filter(d => d.n.includes(nm));
-        renderList(data, isSeoul);
-        plot(data, isSeoul);
-        document.getElementById('resultInfo').innerHTML = `📍 <strong>${name}</strong> 기준 — <strong>${data.length.toLocaleString()}개</strong> 가맹점`;
-      } catch(e) {
-        document.getElementById('listPanel').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>데이터를 불러올 수 없습니다.</p></div>';
-      }
-    });
-  }, () => {
-    alert('위치 권한을 허용해주세요.');
-    document.getElementById('listPanel').innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>위치 권한을 허용해주세요.</p></div>';
-  });
+function resetAll(){
+  document.getElementById('sr').value='';document.getElementById('sc').value='';document.getElementById('tn').value='';
+  clrM();iw.close();if(myM){myM.setMap(null);myM=null;}
+  map.setCenter(new kakao.maps.LatLng(37.5665,126.9780));map.setLevel(8);
+  document.getElementById('ri').innerHTML='📍 <strong>내 주변 바로 찾기</strong>를 누르거나, 탭에서 지역을 선택해 검색하세요.';
+  document.getElementById('lp').innerHTML='<div class="es"><div class="ic">📍</div><p><strong>내 주변 바로 찾기</strong>를<br>눌러주세요.</p></div>';
+  ai=null;
 }
-
-function setLoading() {
-  document.getElementById('listPanel').innerHTML = '<div class="loading">⏳ 검색 중...</div>';
-}
-
-function resetAll() {
-  document.getElementById('selRegion').value = '';
-  document.getElementById('selCat').value = '';
-  if (myMarker) { myMarker.setMap(null); myMarker = null; }
-  clearAll();
-}
-
-document.getElementById('txtName').addEventListener('keydown', e => { if (e.key==='Enter') doSearch(); });
+document.getElementById('tn').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
 switchTab('seoul');
 </script>
 </body>
